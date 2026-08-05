@@ -1,1 +1,24 @@
-<p>transactions works!</p>
+<input
+  type="text"
+  placeholder="Buscar por descrição..."
+  (input)="onSearchChange($event)"
+/>
+
+@if (loading()) {
+  <p>Carregando...</p>
+} @else if (transactions().length === 0) {
+  <p>Nenhuma transação encontrada.</p>
+} @else {
+  <ul class="transaction-list">
+    @for (transaction of transactions(); track transaction.id) {
+      <li class="transaction-item" [class.income]="transaction.type === 'income'" [class.expense]="transaction.type === 'expense'">
+        <div class="info">
+          <strong>{{ transaction.description }}</strong>
+          <span>{{ transaction.date | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <span class="amount">{{ transaction.amount | currency:'BRL' }}</span>
+        <button> Excluir</button>
+      </li>
+    }
+  </ul>
+}

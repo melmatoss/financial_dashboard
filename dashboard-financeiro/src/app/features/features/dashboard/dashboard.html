@@ -1,1 +1,20 @@
-<p>dashboard works!</p>
+@if (loading()) {
+  <p>Carregando...</p>
+} @else if (error()) {
+  <p class="error">Erro ao carregar transações.</p>
+} @else {
+  <div class="summary-cards">
+    <div class="card">
+      <span>Saldo</span>
+      <strong>{{ balance() | currency:'BRL' }}</strong>
+    </div>
+    <div class="card income">
+      <span>Receitas</span>
+      <strong>{{ totalIncome() | currency:'BRL' }}</strong>
+    </div>
+    <div class="card expense">
+      <span>Despesas</span>
+      <strong>{{ totalExpense() | currency:'BRL' }}</strong>
+    </div>
+  </div>
+}
