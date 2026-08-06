@@ -17,7 +17,7 @@
           <span>{{ transaction.date | date:'dd/MM/yyyy' }}</span>
         </div>
         <span class="amount">{{ transaction.amount | currency:'BRL' }}</span>
-        <button> Excluir</button>
+        <button (click)="onRemove(transaction.id)"> Excluir </button>
       </li>
     }
   </ul>

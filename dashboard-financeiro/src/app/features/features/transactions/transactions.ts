@@ -19,7 +19,7 @@ export class TransactionsComponent {
     this.store.updateFilters({ searchTerm: value });
   }
 
-  // onRemove(id: string): void {
-  //   this.store.removeTransaction(id);
-  // }
+  onRemove(id: string): void {
+    this.store.removeTransaction(id);
+  }
 }

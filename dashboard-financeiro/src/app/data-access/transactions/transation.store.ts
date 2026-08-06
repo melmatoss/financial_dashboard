@@ -48,6 +48,11 @@ export class TransactionStore {
     this.transactionsResource.reload();
   }
 
+  async removeTransaction(id: string): Promise<void> {
+    await firstValueFrom(this.transactionService.delete(id));
+    this.transactionsResource.reload();
+  }
+
   updateFilters(filters: Partial<TransactionFilters>): void {
     this._filters.update(current => ({ ...current, ...filters }));
   }

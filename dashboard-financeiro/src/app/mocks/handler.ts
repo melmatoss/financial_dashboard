@@ -32,5 +32,14 @@ export const handlers = [
   http.post('/api/transactions', async ({ request }) => {
     const newTransaction = await request.json();
     return HttpResponse.json(newTransaction, { status: 201 });
+  }),
+
+  http.delete('/api/transactions/:id', ({ params }) => {
+    const { id } = params;
+    const index = mockTransactions.findIndex(t => t.id === id);
+    if (index !== -1) {
+      mockTransactions.splice(index, 1);
+    }
+    return HttpResponse.json(null, { status: 204 });
   })
 ];
