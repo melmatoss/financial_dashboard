@@ -1,3 +1,12 @@
+<button (click)="openModal()">+ Nova transação</button>
+
+@if (isModalOpen()) {
+  <div class="modal-backdrop">
+    <div class="modal-content">
+      <app-transaction-form (saved)="onSave($event)" (cancelled)="onCancel()" />
+    </div>
+  </div>
+}
 <input
   type="text"
   placeholder="Buscar por descrição..."

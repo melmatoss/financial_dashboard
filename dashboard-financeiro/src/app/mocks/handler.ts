@@ -30,7 +30,17 @@ export const handlers = [
   }),
 
   http.post('/api/transactions', async ({ request }) => {
-    const newTransaction = await request.json();
+    const dto = await request.json() as Omit<Transaction, 'id' | 'source' | 'createdAt'>;
+    
+    const newTransaction: Transaction = {
+      ...dto,
+      id: crypto.randomUUID(),
+      source: 'manual',
+      createdAt: new Date(),
+    };
+    
+    mockTransactions.push(newTransaction);
+    
     return HttpResponse.json(newTransaction, { status: 201 });
   }),
 
