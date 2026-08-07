@@ -24,3 +24,8 @@ export interface CreateTransactionDTO {
   categoryId: string;
   type: 'income' | 'expense';
 }
+
+export interface ExpenseByCategory {
+  categoryId: string;
+  total: number;
+}

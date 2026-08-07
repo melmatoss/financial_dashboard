@@ -2,6 +2,7 @@ import { Injectable, computed, signal, resource, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { TransactionService } from './transaction.service';
 import { Transaction, TransactionFilters, CreateTransactionDTO } from './transaction.model';
+import { ChartDataPoint } from '../../shared/charts/pie-chart/pie-chart';
 
 @Injectable({ providedIn: 'root' })
 export class TransactionStore {
@@ -42,6 +43,33 @@ export class TransactionStore {
   );
 
   balance = computed(() => this.totalIncome() - this.totalExpense());
+
+  // Mapeamento temporário de categorias
+  private categoryNames: Record<string, string> = {
+    food: 'Alimentação',
+    transport: 'Transporte',
+    rent: 'Moradia',
+    leisure: 'Lazer'
+  };
+
+  // Dados prontos para o gráfico
+  expensesByCategory = computed<ChartDataPoint[]>(() => {
+    const grouped = new Map<string, number>();
+
+    for (const transaction of this.filteredTransactions()) {
+      if (transaction.type !== 'expense') continue;
+
+      grouped.set(
+        transaction.categoryId,
+        (grouped.get(transaction.categoryId) ?? 0) + Math.abs(transaction.amount)
+      );
+    }
+
+    return Array.from(grouped.entries()).map(([categoryId, total]) => ({
+      name: this.categoryNames[categoryId] ?? 'Sem categoria',
+      value: total
+    }));
+  });
 
   async addTransaction(dto: CreateTransactionDTO): Promise<void> {
     await firstValueFrom(this.transactionService.create(dto));

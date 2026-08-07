@@ -17,4 +17,10 @@
       <strong>{{ totalExpense() | currency:'BRL' }}</strong>
     </div>
   </div>
+  @if (expensesByCategory().length > 0) {
+  <div class="chart-container">
+    <h3>Despesas por categoria</h3>
+    <app-pie-chart [data]="expensesByCategory()" />
+  </div>
+}
 }
