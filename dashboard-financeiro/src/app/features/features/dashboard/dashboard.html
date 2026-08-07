@@ -3,30 +3,45 @@
 } @else if (error()) {
   <p class="error">Erro ao carregar transações.</p>
 } @else {
-  <div class="summary-cards">
-    <div class="card">
-      <span>Saldo</span>
-      <strong>{{ balance() | currency:'BRL' }}</strong>
+  <div class="dashboard-page">
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="card p-3 h-100">
+          <span class="text-muted small">Saldo</span>
+          <strong class="fs-3">{{ balance() | currency:'BRL' }}</strong>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-3 h-100">
+          <span class="text-muted small">Receitas</span>
+          <strong class="fs-3 text-success">{{ totalIncome() | currency:'BRL' }}</strong>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-3 h-100">
+          <span class="text-muted small">Despesas</span>
+          <strong class="fs-3 text-danger">{{ totalExpense() | currency:'BRL' }}</strong>
+        </div>
+      </div>
     </div>
-    <div class="card income">
-      <span>Receitas</span>
-      <strong>{{ totalIncome() | currency:'BRL' }}</strong>
-    </div>
-    <div class="card expense">
-      <span>Despesas</span>
-      <strong>{{ totalExpense() | currency:'BRL' }}</strong>
+
+    <div class="row g-3">
+      @if (expensesByCategory().length > 0) {
+        <div class="col-md-6">
+          <div class="card p-3 h-100">
+            <h3 class="fs-6 fw-semibold mb-3">Despesas por categoria</h3>
+            <app-pie-chart [data]="expensesByCategory()" />
+          </div>
+        </div>
+      }
+      @if (monthlyEvolution().length > 0) {
+        <div class="col-md-6">
+          <div class="card p-3 h-100">
+            <h3 class="fs-6 fw-semibold mb-3">Evolução mensal</h3>
+            <app-bar-chart [data]="monthlyEvolution()" />
+          </div>
+        </div>
+      }
     </div>
   </div>
-    @if (expensesByCategory().length > 0) {
-    <div class="chart-container">
-      <h3>Despesas por categoria</h3>
-      <app-pie-chart [data]="expensesByCategory()" />
-    </div>
-    }
-    @if (monthlyEvolution().length > 0) {
-    <div class="chart-container">
-      <h3>Evolução mensal</h3>
-      <app-bar-chart [data]="monthlyEvolution()" />
-    </div>
-  }
 }

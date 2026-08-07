@@ -1,7 +1,36 @@
-<nav class="main-nav">
-  <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-  <a routerLink="/transactions" routerLinkActive="active">Transações</a>
-  <a routerLink="/import" routerLinkActive="active">Importar</a>
-</nav>
+<div class="d-flex vh-100">
+  <!-- Sidebar -->
+  <aside class="sidebar d-flex flex-column p-3 bg-white border-end">
+    <div class="d-flex align-items-center gap-2 mb-4">
+      <div class="logo-icon">
+        <i class="bi bi-graph-up-arrow"></i>
+      </div>
+      <span class="fw-bold fs-5">FinFlow</span>
+    </div>
 
-<router-outlet />
+    <nav class="nav flex-column gap-1">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-grid-1x2 me-2"></i> Dashboard
+      </a>
+      <a routerLink="/transactions" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-card-list me-2"></i> Transações
+      </a>
+      <a routerLink="/import" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-cloud-upload me-2"></i> Importar
+      </a>
+    </nav>
+
+    <div class="mt-auto d-flex align-items-center gap-2 pt-3 border-top">
+      <div class="avatar-placeholder"></div>
+      <div>
+        <div class="fw-semibold small">Usuário</div>
+        <div class="text-muted small">Estudo Angular</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Conteúdo principal -->
+  <main class="flex-grow-1 overflow-auto bg-light p-4">
+    <router-outlet />
+  </main>
+</div>
