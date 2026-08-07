@@ -2,10 +2,11 @@ import { Component, inject } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { PieChartComponent } from '../../../shared/charts/pie-chart/pie-chart';
 import { TransactionStore } from '../../../data-access/transactions/transation.store';
+import { BarChartComponent } from '../../../shared/charts/bar-chart/bar-chart';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CurrencyPipe, PieChartComponent],
+  imports: [CurrencyPipe, PieChartComponent, BarChartComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -18,4 +19,5 @@ export class DashboardComponent {
   loading = this.store.loading;
   error = this.store.error;
   expensesByCategory = this.store.expensesByCategory;
+  monthlyEvolution = this.store.monthlyEvolution;
 }

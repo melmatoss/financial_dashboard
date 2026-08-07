@@ -3,10 +3,12 @@ import { firstValueFrom } from 'rxjs';
 import { TransactionService } from './transaction.service';
 import { Transaction, TransactionFilters, CreateTransactionDTO } from './transaction.model';
 import { ChartDataPoint } from '../../shared/charts/pie-chart/pie-chart';
+import { CategoryStore } from '../categories/categories.store';
 
 @Injectable({ providedIn: 'root' })
 export class TransactionStore {
   private transactionService = inject(TransactionService);
+  private categoryStore = inject(CategoryStore);
 
   private _filters = signal<TransactionFilters>({ period: 'month' });
   filters = this._filters.asReadonly();
@@ -44,14 +46,6 @@ export class TransactionStore {
 
   balance = computed(() => this.totalIncome() - this.totalExpense());
 
-  // Mapeamento temporário de categorias
-  private categoryNames: Record<string, string> = {
-    food: 'Alimentação',
-    transport: 'Transporte',
-    rent: 'Moradia',
-    leisure: 'Lazer'
-  };
-
   // Dados prontos para o gráfico
   expensesByCategory = computed<ChartDataPoint[]>(() => {
     const grouped = new Map<string, number>();
@@ -66,7 +60,7 @@ export class TransactionStore {
     }
 
     return Array.from(grouped.entries()).map(([categoryId, total]) => ({
-      name: this.categoryNames[categoryId] ?? 'Sem categoria',
+      name: this.categoryStore.getCategoryName(categoryId),
       value: total
     }));
   });
@@ -84,4 +78,27 @@ export class TransactionStore {
   updateFilters(filters: Partial<TransactionFilters>): void {
     this._filters.update(current => ({ ...current, ...filters }));
   }
+
+  monthlyEvolution = computed(() => {
+    const all = this.transactions();
+
+    const grouped = new Map<string, { income: number; expense: number }>();
+
+    for (const t of all) {
+      const key = `${t.date.getFullYear()}-${String(t.date.getMonth() + 1).padStart(2, '0')}`;
+      const entry = grouped.get(key) ?? { income: 0, expense: 0 };
+
+      if (t.type === 'income') {
+        entry.income += t.amount;
+      } else {
+        entry.expense += Math.abs(t.amount);
+      }
+
+      grouped.set(key, entry);
+    }
+
+    return Array.from(grouped.entries())
+      .sort(([monthA], [monthB]) => monthA.localeCompare(monthB))
+      .map(([month, values]) => ({ month, ...values }));
+  });
 }

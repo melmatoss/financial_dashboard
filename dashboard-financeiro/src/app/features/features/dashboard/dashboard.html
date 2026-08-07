@@ -17,10 +17,16 @@
       <strong>{{ totalExpense() | currency:'BRL' }}</strong>
     </div>
   </div>
-  @if (expensesByCategory().length > 0) {
-  <div class="chart-container">
-    <h3>Despesas por categoria</h3>
-    <app-pie-chart [data]="expensesByCategory()" />
-  </div>
-}
+    @if (expensesByCategory().length > 0) {
+    <div class="chart-container">
+      <h3>Despesas por categoria</h3>
+      <app-pie-chart [data]="expensesByCategory()" />
+    </div>
+    }
+    @if (monthlyEvolution().length > 0) {
+    <div class="chart-container">
+      <h3>Evolução mensal</h3>
+      <app-bar-chart [data]="monthlyEvolution()" />
+    </div>
+  }
 }
