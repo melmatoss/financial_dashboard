@@ -1,1 +1,53 @@
-<p>import works!</p>
+<h2>Importar extrato (CSV)</h2>
+
+<input type="file" accept=".csv" (change)="onFileSelected($event)" />
+
+@if (importedCount(); as count) {
+  <p class="success">{{ count }} transações importadas com sucesso!</p>
+}
+
+@if (parseResult(); as result) {
+  <div class="preview">
+    <p>{{ result.validCount }} válidas, {{ result.errorCount }} com erro</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Descrição</th>
+          <th>Data</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of result.rows; track $index) {
+          <tr [class.error]="row.transaction === null">
+            @if (row.transaction; as t) {
+              <td>✅</td>
+              <td>{{ t.description }}</td>
+              <td>{{ t.date.toLocaleDateString('pt-BR') }}</td>
+              <td>{{ t.amount | currency:'BRL' }}</td>
+            } @else {
+              <td>❌</td>
+              <td colspan="3">{{ row.errors.join(', ') }}</td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="actions">
+      <button (click)="onCancel()">Cancelar</button>
+      <button
+        [disabled]="result.validCount === 0 || importing()"
+        (click)="onConfirmImport()"
+      >
+        @if (importing()) {
+          Importando...
+        } @else {
+          Confirmar importação ({{ result.validCount }})
+        }
+      </button>
+    </div>
+  </div>
+}
