@@ -45,6 +45,7 @@ export class PieChartComponent implements OnDestroy {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'bottom' },
         },

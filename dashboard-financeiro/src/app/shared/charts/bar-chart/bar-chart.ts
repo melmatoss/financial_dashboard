@@ -51,6 +51,7 @@ export class BarChartComponent implements OnDestroy {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'bottom' },
         },

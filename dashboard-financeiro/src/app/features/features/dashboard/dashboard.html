@@ -3,7 +3,7 @@
 } @else if (error()) {
   <p class="error">Erro ao carregar transações.</p>
 } @else {
-  <div class="dashboard-page">
+  <div class="dashboard-page mx-auto">
     <div class="row g-3 mb-4">
       <div class="col-md-4">
         <div class="card p-3 h-100">
@@ -30,7 +30,9 @@
         <div class="col-md-6">
           <div class="card p-3 h-100">
             <h3 class="fs-6 fw-semibold mb-3">Despesas por categoria</h3>
-            <app-pie-chart [data]="expensesByCategory()" />
+            <div class="chart-wrapper">
+              <app-pie-chart [data]="expensesByCategory()" />
+            </div>
           </div>
         </div>
       }
@@ -38,7 +40,9 @@
         <div class="col-md-6">
           <div class="card p-3 h-100">
             <h3 class="fs-6 fw-semibold mb-3">Evolução mensal</h3>
-            <app-bar-chart [data]="monthlyEvolution()" />
+            <div class="chart-wrapper">
+              <app-bar-chart [data]="monthlyEvolution()" />
+            </div>
           </div>
         </div>
       }
