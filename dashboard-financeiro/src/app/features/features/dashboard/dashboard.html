@@ -6,21 +6,36 @@
   <div class="dashboard-page mx-auto">
     <div class="row g-3 mb-4">
       <div class="col-md-4">
-        <div class="card p-3 h-100">
-          <span class="text-muted small">Saldo</span>
-          <strong class="fs-3">{{ balance() | currency:'BRL' }}</strong>
+        <div class="card p-3 h-100 d-flex flex-row align-items-center gap-3">
+          <div class="icon-badge bg-primary-subtle text-primary">
+            <i class="bi bi-wallet2"></i>
+          </div>
+          <div>
+            <span class="text-muted small d-block">Saldo</span>
+            <strong class="fs-4">{{ balance() | currency:'BRL' }}</strong>
+          </div>
         </div>
       </div>
       <div class="col-md-4">
-        <div class="card p-3 h-100">
-          <span class="text-muted small">Receitas</span>
-          <strong class="fs-3 text-success">{{ totalIncome() | currency:'BRL' }}</strong>
+        <div class="card p-3 h-100 d-flex flex-row align-items-center gap-3">
+          <div class="icon-badge bg-success-subtle text-success">
+            <i class="bi bi-graph-up-arrow"></i>
+          </div>
+          <div>
+            <span class="text-muted small d-block">Receitas</span>
+            <strong class="fs-4 text-success">{{ totalIncome() | currency:'BRL' }}</strong>
+          </div>
         </div>
       </div>
       <div class="col-md-4">
-        <div class="card p-3 h-100">
-          <span class="text-muted small">Despesas</span>
-          <strong class="fs-3 text-danger">{{ totalExpense() | currency:'BRL' }}</strong>
+        <div class="card p-3 h-100 d-flex flex-row align-items-center gap-3">
+          <div class="icon-badge bg-danger-subtle text-danger">
+            <i class="bi bi-graph-down-arrow"></i>
+          </div>
+          <div>
+            <span class="text-muted small d-block">Despesas</span>
+            <strong class="fs-4 text-danger">{{ totalExpense() | currency:'BRL' }}</strong>
+          </div>
         </div>
       </div>
     </div>
@@ -46,6 +61,95 @@
           </div>
         </div>
       }
+        </div>
+      <div class="row g-3 mt-1">
+      <div class="col-md-6">
+        <div class="card p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="fs-6 fw-semibold mb-0">Transações recentes</h3>
+            <a routerLink="/transactions" class="small text-decoration-none">Ver todas</a>
+          </div>
+
+          <div class="d-flex flex-column gap-3">
+            @for (transaction of recentTransactions(); track transaction.id) {
+              <div class="d-flex align-items-center gap-3">
+                <div
+                  class="icon-badge"
+                  [class.bg-success-subtle]="transaction.type === 'income'"
+                  [class.text-success]="transaction.type === 'income'"
+                  [class.bg-danger-subtle]="transaction.type === 'expense'"
+                  [class.text-danger]="transaction.type === 'expense'"
+                >
+                  <i
+                    class="bi"
+                    [class.bi-arrow-down-circle]="transaction.type === 'income'"
+                    [class.bi-arrow-up-circle]="transaction.type === 'expense'"
+                  ></i>
+                </div>
+                <div class="flex-grow-1">
+                  <div class="fw-semibold">{{ transaction.description }}</div>
+                  <div class="text-muted small">{{ transaction.date | date:'dd/MM/yyyy' }}</div>
+                </div>
+                <div
+                  class="fw-semibold"
+                  [class.text-success]="transaction.type === 'income'"
+                  [class.text-danger]="transaction.type === 'expense'"
+                >
+                  {{ transaction.amount | currency:'BRL' }}
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card p-3">
+          <h3 class="fs-6 fw-semibold mb-3">Resumo do mês</h3>
+
+          <div class="d-flex flex-column gap-3">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-badge bg-success-subtle text-success">
+                <i class="bi bi-cash-coin"></i>
+              </div>
+              <div>
+                <div class="text-muted small">Total de receitas</div>
+                <div class="fw-semibold text-success">{{ totalIncome() | currency:'BRL' }}</div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-badge bg-danger-subtle text-danger">
+                <i class="bi bi-cash-stack"></i>
+              </div>
+              <div>
+                <div class="text-muted small">Total de despesas</div>
+                <div class="fw-semibold text-danger">{{ totalExpense() | currency:'BRL' }}</div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-badge bg-primary-subtle text-primary">
+                <i class="bi bi-graph-up"></i>
+              </div>
+              <div>
+                <div class="text-muted small">Saldo do mês</div>
+                <div class="fw-semibold text-primary">{{ balance() | currency:'BRL' }}</div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-badge bg-secondary-subtle text-secondary">
+                <i class="bi bi-receipt"></i>
+              </div>
+              <div>
+                <div class="text-muted small">Transações</div>
+                <div class="fw-semibold">{{ transactionCount() }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 }

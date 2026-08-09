@@ -101,4 +101,12 @@ export class TransactionStore {
       .sort(([monthA], [monthB]) => monthA.localeCompare(monthB))
       .map(([month, values]) => ({ month, ...values }));
   });
+
+  recentTransactions = computed(() => {
+    return [...this.transactions()]
+      .sort((a, b) => b.date.getTime() - a.date.getTime())
+      .slice(0, 4);
+  });
+
+  transactionCount = computed(() => this.filteredTransactions().length);
 }
