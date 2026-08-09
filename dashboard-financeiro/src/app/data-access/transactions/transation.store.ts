@@ -97,9 +97,15 @@ export class TransactionStore {
       grouped.set(key, entry);
     }
 
+    const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
     return Array.from(grouped.entries())
       .sort(([monthA], [monthB]) => monthA.localeCompare(monthB))
-      .map(([month, values]) => ({ month, ...values }));
+      .map(([key, values]) => {
+        const [year, month] = key.split('-');
+        const label = `${monthNames[Number(month) - 1]}/${year.slice(2)}`;
+        return { month: label, ...values };
+      });
   });
 
   recentTransactions = computed(() => {

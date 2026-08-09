@@ -45,13 +45,17 @@ export class BarChartComponent implements OnDestroy {
       data: {
         labels,
         datasets: [
-          { label: 'Receitas', data: incomeData, backgroundColor: '#10b981' },
-          { label: 'Despesas', data: expenseData, backgroundColor: '#ef4444' },
+          { label: 'Receitas', data: incomeData, backgroundColor: '#10b981', borderRadius: 6, maxBarThickness: 28 },
+          { label: 'Despesas', data: expenseData, backgroundColor: '#ef4444', borderRadius: 6, maxBarThickness: 28 },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        scales: {
+          x: { grid: { display: false } },
+          y: { grid: { color: '#f3f4f6' } },
+        },
         plugins: {
           legend: { position: 'bottom' },
         },
