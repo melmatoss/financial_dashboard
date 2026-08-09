@@ -1,33 +1,77 @@
-<button (click)="openModal()">+ Nova transação</button>
+<div class="transactions-page">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fs-4 fw-semibold mb-1">Transações</h2>
+      <p class="text-muted mb-0">Gerencie suas movimentações</p>
+    </div>
+    <button class="btn btn-dark" (click)="openModal()">
+      <i class="bi bi-plus-lg me-1"></i> Nova transação
+    </button>
+  </div>
+
+  <div class="card p-3 mb-3">
+    <div class="input-group">
+      <span class="input-group-text bg-white border-end-0">
+        <i class="bi bi-search"></i>
+      </span>
+      <input
+        type="text"
+        class="form-control border-start-0"
+        placeholder="Buscar por descrição..."
+        (input)="onSearchChange($event)"
+      />
+    </div>
+  </div>
+
+  <div class="card p-3">
+    @if (loading()) {
+      <p class="text-muted text-center py-4 mb-0">Carregando...</p>
+    } @else if (transactions().length === 0) {
+      <p class="text-muted text-center py-4 mb-0">Nenhuma transação encontrada.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Descrição</th>
+              <th>Data</th>
+              <th class="text-end">Valor</th>
+              <th class="text-end">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (transaction of transactions(); track transaction.id) {
+              <tr>
+                <td class="fw-semibold">{{ transaction.description }}</td>
+                <td class="text-muted">{{ transaction.date | date:'dd/MM/yyyy' }}</td>
+                <td
+                  class="text-end fw-semibold"
+                  [class.text-success]="transaction.type === 'income'"
+                  [class.text-danger]="transaction.type === 'expense'"
+                >
+                  {{ transaction.amount | currency:'BRL' }}
+                </td>
+                <td class="text-end">
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="onRemove(transaction.id)"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
 
 @if (isModalOpen()) {
-  <div class="modal-backdrop">
-    <div class="modal-content">
+  <div class="modal-backdrop-custom">
+    <div class="modal-content-custom">
       <app-transaction-form (saved)="onSave($event)" (cancelled)="onCancel()" />
     </div>
   </div>
-}
-<input
-  type="text"
-  placeholder="Buscar por descrição..."
-  (input)="onSearchChange($event)"
-/>
-
-@if (loading()) {
-  <p>Carregando...</p>
-} @else if (transactions().length === 0) {
-  <p>Nenhuma transação encontrada.</p>
-} @else {
-  <ul class="transaction-list">
-    @for (transaction of transactions(); track transaction.id) {
-      <li class="transaction-item" [class.income]="transaction.type === 'income'" [class.expense]="transaction.type === 'expense'">
-        <div class="info">
-          <strong>{{ transaction.description }}</strong>
-          <span>{{ transaction.date | date:'dd/MM/yyyy' }}</span>
-        </div>
-        <span class="amount">{{ transaction.amount | currency:'BRL' }}</span>
-        <button (click)="onRemove(transaction.id)"> Excluir </button>
-      </li>
-    }
-  </ul>
 }

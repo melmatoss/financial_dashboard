@@ -1,53 +1,78 @@
-<h2>Importar extrato (CSV)</h2>
+<div class="import-page">
+  <h2 class="fs-4 fw-semibold mb-1">Importar extrato</h2>
+  <p class="text-muted mb-4">Envie um arquivo CSV com suas transações</p>
 
-<input type="file" accept=".csv" (change)="onFileSelected($event)" />
-
-@if (importedCount(); as count) {
-  <p class="success">{{ count }} transações importadas com sucesso!</p>
-}
-
-@if (parseResult(); as result) {
-  <div class="preview">
-    <p>{{ result.validCount }} válidas, {{ result.errorCount }} com erro</p>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Status</th>
-          <th>Descrição</th>
-          <th>Data</th>
-          <th>Valor</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of result.rows; track $index) {
-          <tr [class.error]="row.transaction === null">
-            @if (row.transaction; as t) {
-              <td>✅</td>
-              <td>{{ t.description }}</td>
-              <td>{{ t.date.toLocaleDateString('pt-BR') }}</td>
-              <td>{{ t.amount | currency:'BRL' }}</td>
-            } @else {
-              <td>❌</td>
-              <td colspan="3">{{ row.errors.join(', ') }}</td>
-            }
-          </tr>
-        }
-      </tbody>
-    </table>
-
-    <div class="actions">
-      <button (click)="onCancel()">Cancelar</button>
-      <button
-        [disabled]="result.validCount === 0 || importing()"
-        (click)="onConfirmImport()"
-      >
-        @if (importing()) {
-          Importando...
-        } @else {
-          Confirmar importação ({{ result.validCount }})
-        }
-      </button>
-    </div>
+  <div class="card p-4 mb-4">
+    <label for="csvFile" class="form-label fw-semibold">Arquivo CSV</label>
+    <input
+      id="csvFile"
+      type="file"
+      accept=".csv"
+      class="form-control"
+      (change)="onFileSelected($event)"
+    />
   </div>
-}
+
+  @if (importedCount(); as count) {
+    <div class="alert alert-success d-flex align-items-center gap-2">
+      <i class="bi bi-check-circle-fill"></i>
+      {{ count }} transações importadas com sucesso!
+    </div>
+  }
+
+  @if (parseResult(); as result) {
+    <div class="card p-4">
+      <div class="d-flex gap-2 mb-3">
+        <span class="badge text-bg-success">{{ result.validCount }} válidas</span>
+        @if (result.errorCount > 0) {
+          <span class="badge text-bg-danger">{{ result.errorCount }} com erro</span>
+        }
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Descrição</th>
+              <th>Data</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of result.rows; track $index) {
+              <tr [class.table-danger]="row.transaction === null">
+                @if (row.transaction; as t) {
+                  <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                  <td>{{ t.description }}</td>
+                  <td>{{ t.date.toLocaleDateString('pt-BR') }}</td>
+                  <td>{{ t.amount | currency:'BRL' }}</td>
+                } @else {
+                  <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                  <td colspan="3" class="text-danger small">{{ row.errors.join(', ') }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 mt-3">
+        <button class="btn btn-outline-secondary" (click)="onCancel()">
+          Cancelar
+        </button>
+        <button
+          class="btn btn-dark"
+          [disabled]="result.validCount === 0 || importing()"
+          (click)="onConfirmImport()"
+        >
+          @if (importing()) {
+            <span class="spinner-border spinner-border-sm me-2"></span> Importando...
+          } @else {
+            Confirmar importação ({{ result.validCount }})
+          }
+        </button>
+      </div>
+    </div>
+  }
+</div>
