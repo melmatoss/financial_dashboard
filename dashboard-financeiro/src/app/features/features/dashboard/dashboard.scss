@@ -28,3 +28,22 @@
     height: 100%;
   }
 }
+
+//empty transations dashboard
+.empty-state {
+  max-width: 420px;
+  padding: 4rem 1rem;
+}
+
+.empty-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}

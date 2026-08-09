@@ -2,7 +2,26 @@
   <p>Carregando...</p>
 } @else if (error()) {
   <p class="error">Erro ao carregar transações.</p>
-} @else {
+}  @else if (!hasTransactions()) {
+  <div class="empty-state mx-auto text-center">
+    <div class="empty-icon mb-3">
+      <i class="bi bi-wallet2"></i>
+    </div>
+    <h2 class="fs-4 fw-semibold mb-2">Nenhuma transação ainda</h2>
+    <p class="text-muted mb-4">
+      Comece adicionando sua primeira transação ou importe um extrato em CSV
+      pra ver seu resumo financeiro aqui.
+    </p>
+    <div class="d-flex gap-2 justify-content-center">
+      <a routerLink="/transactions" class="btn btn-dark">
+        <i class="bi bi-plus-lg me-1"></i> Nova transação
+      </a>
+      <a routerLink="/import" class="btn btn-outline-secondary">
+        <i class="bi bi-cloud-upload me-1"></i> Importar CSV
+      </a>
+    </div>
+  </div>
+}@else {
   <div class="dashboard-page mx-auto">
     <div class="row g-3 mb-4">
       <div class="col-md-4">
