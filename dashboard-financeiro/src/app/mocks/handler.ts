@@ -1,32 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import { Transaction } from '../data-access/transactions/transaction.model';
 import { Category } from '../data-access/categories/categories.models';
-
-const STORAGE_KEY = 'dashboard-financeiro:transactions';
-
-const defaultTransactions: Transaction[] = [
-  {
-    id: '1',
-    description: 'Salário',
-    amount: 5000,
-    date: new Date('2026-08-01'),
-    categoryId: 'salary',
-    type: 'income',
-    source: 'manual',
-    createdAt: new Date('2026-08-01')
-  },
-  {
-    id: '2',
-    description: 'Supermercado',
-    amount: -350,
-    date: new Date('2026-08-03'),
-    categoryId: 'food',
-    type: 'expense',
-    source: 'manual',
-    createdAt: new Date('2026-08-03')
-  }
-];
-
 const mockCategories: Category[] = [
   { id: 'food', name: 'Alimentação', color: '#f59e0b' },
   { id: 'transport', name: 'Transporte', color: '#3b82f6' },
@@ -36,9 +10,13 @@ const mockCategories: Category[] = [
   { id: 'other', name: 'Outros', color: '#6b7280' },
 ];
 
-function loadTransactions(): Transaction[] {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) return defaultTransactions;
+function storageKey(userId: string): string {
+  return `dashboard-financeiro:transactions:${userId}`;
+}
+
+function loadTransactions(userId: string): Transaction[] {
+  const stored = localStorage.getItem(storageKey(userId));
+  if (!stored) return [];
 
   try {
     const parsed = JSON.parse(stored) as Transaction[];
@@ -48,22 +26,22 @@ function loadTransactions(): Transaction[] {
       createdAt: new Date(t.createdAt),
     }));
   } catch {
-    return defaultTransactions;
+    return [];
   }
 }
 
-function saveTransactions(transactions: Transaction[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+function saveTransactions(userId: string, transactions: Transaction[]): void {
+  localStorage.setItem(storageKey(userId), JSON.stringify(transactions));
 }
 
-let mockTransactions: Transaction[] = loadTransactions();
-
 export const handlers = [
-  http.get('/api/transactions', () => {
-    return HttpResponse.json(mockTransactions);
+  http.get('/api/transactions', ({ request }) => {
+    const userId = request.headers.get('X-User-Id') ?? '';
+    return HttpResponse.json(loadTransactions(userId));
   }),
 
   http.post('/api/transactions', async ({ request }) => {
+    const userId = request.headers.get('X-User-Id') ?? '';
     const dto = await request.json() as Omit<Transaction, 'id' | 'source' | 'createdAt'>;
 
     const newTransaction: Transaction = {
@@ -73,19 +51,24 @@ export const handlers = [
       createdAt: new Date(),
     };
 
-    mockTransactions.push(newTransaction);
-    saveTransactions(mockTransactions);
+    const transactions = loadTransactions(userId);
+    transactions.push(newTransaction);
+    saveTransactions(userId, transactions);
 
     return HttpResponse.json(newTransaction, { status: 201 });
   }),
 
-  http.delete('/api/transactions/:id', ({ params }) => {
+  http.delete('/api/transactions/:id', ({ request, params }) => {
+    const userId = request.headers.get('X-User-Id') ?? '';
     const { id } = params;
-    const index = mockTransactions.findIndex(t => t.id === id);
+
+    const transactions = loadTransactions(userId);
+    const index = transactions.findIndex(t => t.id === id);
     if (index !== -1) {
-      mockTransactions.splice(index, 1);
-      saveTransactions(mockTransactions);
+      transactions.splice(index, 1);
+      saveTransactions(userId, transactions);
     }
+
     return HttpResponse.json(null, { status: 204 });
   }),
 

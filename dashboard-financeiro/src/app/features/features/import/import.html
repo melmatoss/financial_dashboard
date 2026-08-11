@@ -44,7 +44,14 @@
               <tr [class.table-danger]="row.transaction === null">
                 @if (row.transaction; as t) {
                   <td><i class="bi bi-check-circle-fill text-success"></i></td>
-                  <td>{{ t.description }}</td>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      [value]="t.description"
+                      (change)="updateDescription($index, $any($event.target).value)"
+                    />
+                  </td>
                   <td>{{ t.date.toLocaleDateString('pt-BR') }}</td>
                   <td>{{ t.amount | currency:'BRL' }}</td>
                 } @else {

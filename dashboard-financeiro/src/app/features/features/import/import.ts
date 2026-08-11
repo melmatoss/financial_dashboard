@@ -49,4 +49,17 @@ export class ImportComponent {
   onCancel(): void {
     this.parseResult.set(null);
   }
+
+  updateDescription(rowIndex: number, newDescription: string): void {
+  this.parseResult.update(result => {
+    if (!result) return result;
+
+    const rows = result.rows.map((row, i) => {
+      if (i !== rowIndex || !row.transaction) return row;
+      return { ...row, transaction: { ...row.transaction, description: newDescription } };
+    });
+
+    return { ...result, rows };
+  });
+}
 }

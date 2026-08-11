@@ -24,8 +24,16 @@ export class AuthService {
   }
 
   async signUp(email: string, password: string): Promise<{ error: string | null }> {
-    const { error } = await this.supabase.auth.signUp({ email, password });
-    return { error: error?.message ?? null };
+    const { data, error } = await this.supabase.auth.signUp({ email, password });
+
+    if (error) {
+      return { error: error.message };
+    }
+    if (data.user && data.user.identities && data.user.identities.length === 0) {
+      return { error: 'Este e-mail já está cadastrado. Faça login em vez de criar uma nova conta.' };
+    }
+
+    return { error: null };
   }
 
   async signIn(email: string, password: string): Promise<{ error: string | null }> {
