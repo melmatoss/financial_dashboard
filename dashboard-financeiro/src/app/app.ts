@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import {RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from './core/services/auth';
 
 @Component({
@@ -10,8 +10,21 @@ import { AuthService } from './core/services/auth';
 })
 export class AppComponent {
   authService = inject(AuthService);
+    private router = inject(Router);
+
+  isSidebarOpen = signal(false);
+
+  toggleSidebar(): void {
+    this.isSidebarOpen.update(open => !open);
+  }
+
+  closeSidebar(): void {
+    this.isSidebarOpen.set(false);
+  }
 
   async onLogout(): Promise<void> {
     await this.authService.signOut();
+    this.router.navigate(['/login']);
+
   }
 }
