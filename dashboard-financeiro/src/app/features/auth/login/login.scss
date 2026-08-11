@@ -1,0 +1,21 @@
+.login-page {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+}
+
+.logo-icon {
+  width: 48px;
+  height: 48px;
+  background: #111827;
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
