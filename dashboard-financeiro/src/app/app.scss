@@ -70,3 +70,41 @@
   background: rgba(0, 0, 0, 0.5);
   z-index: 1030;
 }
+
+[data-bs-theme="dark"] {
+  .sidebar {
+    background-color: var(--bs-body-bg) !important;
+    border-color: var(--bs-border-color) !important;
+  }
+
+  .nav-link {
+    color: var(--bs-body-color);
+
+    &:hover:not(.active) {
+      background: var(--bs-tertiary-bg);
+    }
+  }
+
+  .avatar-placeholder {
+    background: var(--bs-tertiary-bg);
+  }
+
+  .logo-icon + span,
+  .fw-bold.fs-5 {
+    color: var(--bs-body-color) !important;
+  }
+
+  .btn-outline-secondary {
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+
+    &:hover {
+      background: var(--bs-tertiary-bg);
+      color: var(--bs-body-color);
+    }
+  }
+
+  .text-truncate.fw-semibold {
+    color: var(--bs-body-color) !important;
+  }
+}

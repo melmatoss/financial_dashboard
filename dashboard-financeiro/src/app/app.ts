@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import {RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from './core/services/auth';
+import { ThemeService } from './core/services/theme';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +11,8 @@ import { AuthService } from './core/services/auth';
 })
 export class AppComponent {
   authService = inject(AuthService);
-    private router = inject(Router);
+  themeService = inject(ThemeService);
+  private router = inject(Router);
 
   isSidebarOpen = signal(false);
 

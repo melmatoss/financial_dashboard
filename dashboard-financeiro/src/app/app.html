@@ -21,7 +21,7 @@
 
       <div class="d-flex">
         <aside
-          class="sidebar d-flex flex-column p-3 bg-white border-end"
+          class="sidebar d-flex flex-column p-3 bg-body border-end"
           [class.sidebar-open]="isSidebarOpen()"
         >
           <div class="d-flex align-items-center gap-2 mb-4 d-none d-lg-flex">
@@ -44,6 +44,13 @@
           </nav>
 
           <div class="mt-auto pt-3 border-top">
+            <button class="btn btn-sm btn-outline-secondary w-100 mb-2" (click)="themeService.toggleTheme()">
+              @if (themeService.theme() === 'light') {
+                <i class="bi bi-moon-stars me-1"></i> Tema escuro
+              } @else {
+                <i class="bi bi-sun me-1"></i> Tema claro
+              }
+            </button>
             <div class="d-flex align-items-center gap-2 mb-2">
               <div class="avatar-placeholder"></div>
               <div class="text-truncate">
@@ -56,7 +63,7 @@
           </div>
         </aside>
 
-        <main class="main-content flex-grow-1 overflow-auto bg-light p-3 p-lg-4">
+        <main class="main-content flex-grow-1 overflow-auto bg-body-tertiary p-3 p-lg-4">
           <router-outlet />
         </main>
       </div>
