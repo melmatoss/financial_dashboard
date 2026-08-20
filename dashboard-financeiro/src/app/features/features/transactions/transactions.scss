@@ -36,17 +36,13 @@
 
 // dark mode
 
-[data-bs-theme="dark"] {
-  .modal-content-custom {
-    background: var(--bs-body-bg);
-    color: var(--bs-body-color);
-  }
-
-  .text-muted {
-    color: var(--bs-secondary-color) !important;
-  }
-
-  .warning-icon {
-    background: rgba(239, 68, 68, 0.15);
-  }
+.modal-content-custom {
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
 }

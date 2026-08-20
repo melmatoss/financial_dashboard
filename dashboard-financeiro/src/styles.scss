@@ -1,1 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+// em src/styles.scss
+[data-bs-theme="dark"] .warning-icon {
+  background: rgba(239, 68, 68, 0.15);
+}
