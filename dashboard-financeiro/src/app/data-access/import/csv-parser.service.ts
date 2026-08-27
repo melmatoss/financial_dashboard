@@ -21,7 +21,7 @@ export class CsvParserService {
     return new Promise((resolve, reject) => {
       Papa.parse(file, {
         header: true,
-        delimiter: ';',
+        delimiter: '', // '' = PapaParse detecta automaticamente ; , ou tab
         skipEmptyLines: true,
         complete: (results) => {
           const rows = (results.data as Record<string, string>[])
@@ -38,25 +38,44 @@ export class CsvParserService {
     });
   }
 
+  private findColumn(raw: Record<string, string>, candidates: string[]): string | undefined {
+    const keys = Object.keys(raw);
+    for (const candidate of candidates) {
+      const normalized = this.normalizeKey(candidate);
+      const found = keys.find(k => this.normalizeKey(k) === normalized);
+      if (found) return raw[found];
+    }
+    return undefined;
+  }
+
+  private normalizeKey(key: string): string {
+    return key
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove acentos
+      .trim()
+      .toLowerCase();
+  }
+
   private parseRow(raw: Record<string, string>): ParsedRow {
     const errors: string[] = [];
 
-    const description = raw['Descricao']?.trim();
+    const description = this.findColumn(raw, ['Descricao', 'Descrição', 'Historico', 'Histórico'])?.trim();
     if (!description) {
       errors.push('Descrição vazia');
     }
 
-    const date = this.parseDate(raw['Data']);
+    const dateRaw = this.findColumn(raw, ['Data']);
+    const date = this.parseDate(dateRaw);
     if (!date) {
-      errors.push(`Data inválida: "${raw['Data']}"`);
+      errors.push(`Data inválida: "${dateRaw}"`);
     }
 
-    const amount = this.parseAmount(raw['Valor']);
+    const amountRaw = this.findColumn(raw, ['Valor']);
+    const amount = this.parseAmount(amountRaw);
     if (amount === null) {
-      errors.push(`Valor inválido: "${raw['Valor']}"`);
+      errors.push(`Valor inválido: "${amountRaw}"`);
     }
 
-    if (errors.length > 0 || !date || amount === null) {
+    if (errors.length > 0 || !date || amount === null || !description) {
       return { raw, transaction: null, errors };
     }
 
@@ -73,7 +92,7 @@ export class CsvParserService {
     };
   }
 
-  private parseDate(value: string): Date | null {
+  private parseDate(value: string | undefined): Date | null {
     if (!value) return null;
 
     const match = value.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
@@ -85,12 +104,28 @@ export class CsvParserService {
     return isNaN(date.getTime()) ? null : date;
   }
 
-  private parseAmount(value: string): number | null {
+  private parseAmount(value: string | undefined): number | null {
     if (!value) return null;
 
-    const normalized = value.trim().replace(/\./g, '').replace(',', '.');
-    const amount = parseFloat(normalized);
+    const trimmed = value.trim();
+    const hasComma = trimmed.includes(',');
+    const hasDot = trimmed.includes('.');
 
+    let normalized: string;
+
+    if (hasComma && hasDot) {
+      const lastComma = trimmed.lastIndexOf(',');
+      const lastDot = trimmed.lastIndexOf('.');
+      normalized = lastComma > lastDot
+        ? trimmed.replace(/\./g, '').replace(',', '.')  // 1.234,56 (BR)
+        : trimmed.replace(/,/g, '');                     // 1,234.56 (internacional)
+    } else if (hasComma) {
+      normalized = trimmed.replace(',', '.');             // 350,50
+    } else {
+      normalized = trimmed;                                // 287.00
+    }
+
+    const amount = parseFloat(normalized);
     return isNaN(amount) ? null : amount;
   }
 }
