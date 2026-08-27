@@ -14,7 +14,7 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  mode = signal<'login' | 'signup'>('login');
+  mode = signal<'login' | 'signup' | 'forgot'>('login');
   loading = signal(false);
   errorMessage = signal<string | null>(null);
 
@@ -29,6 +29,23 @@ export class LoginComponent {
   }
 
   async onSubmit(): Promise<void> {
+    if (this.mode() === 'forgot') {
+      const email = this.form.controls.email.value;
+      if (!email) {
+        this.form.controls.email.markAsTouched();
+        return;
+      }
+
+      this.loading.set(true);
+      const result = await this.authService.requestPasswordReset(email);
+      this.loading.set(false);
+
+      this.errorMessage.set(
+        result.error ?? 'Se esse e-mail estiver cadastrado, você vai receber um link de recuperação.'
+      );
+      return;
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -56,5 +73,15 @@ export class LoginComponent {
     }
 
     this.router.navigate(['/dashboard']);
+  }
+
+  goToForgotPassword(): void {
+    this.mode.set('forgot');
+    this.errorMessage.set(null);
+  }
+
+  backToLogin(): void {
+    this.mode.set('login');
+    this.errorMessage.set(null);
   }
 }

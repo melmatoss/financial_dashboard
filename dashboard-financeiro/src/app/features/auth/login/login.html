@@ -6,7 +6,9 @@
       </div>
       <h1 class="fs-4 fw-bold mb-0">FinFlow</h1>
       <p class="text-muted small">
-        {{ mode() === 'login' ? 'Entre na sua conta' : 'Crie sua conta' }}
+        @if (mode() === 'login') { Entre na sua conta }
+        @else if (mode() === 'signup') { Crie sua conta }
+        @else { Recuperar senha }
       </p>
     </div>
 
@@ -26,33 +28,49 @@
         />
       </div>
 
-      <div class="mb-3">
-        <label for="password" class="form-label">Senha</label>
-        <input
-          id="password"
-          type="password"
-          class="form-control"
-          [class.is-invalid]="form.controls.password.invalid && form.controls.password.touched"
-          formControlName="password"
-        />
-        @if (form.controls.password.invalid && form.controls.password.touched) {
-          <div class="invalid-feedback">Mínimo de 6 caracteres.</div>
-        }
-      </div>
+      @if (mode() !== 'forgot') {
+        <div class="mb-3">
+          <label for="password" class="form-label">Senha</label>
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            [class.is-invalid]="form.controls.password.invalid && form.controls.password.touched"
+            formControlName="password"
+          />
+          @if (form.controls.password.invalid && form.controls.password.touched) {
+            <div class="invalid-feedback">Mínimo de 6 caracteres.</div>
+          }
+        </div>
+      }
+
+      @if (mode() === 'login') {
+        <div class="text-end mb-3">
+          <a href="javascript:void(0)" (click)="goToForgotPassword()" class="small">Esqueci minha senha</a>
+        </div>
+      }
 
       <button type="submit" class="btn btn-dark w-100" [disabled]="loading()">
         @if (loading()) {
           <span class="spinner-border spinner-border-sm me-2"></span>
         }
-        {{ mode() === 'login' ? 'Entrar' : 'Criar conta' }}
+        @if (mode() === 'login') { Entrar }
+        @else if (mode() === 'signup') { Criar conta }
+        @else { Enviar link de recuperação }
       </button>
     </form>
 
-    <p class="text-center small mt-3 mb-0">
-      {{ mode() === 'login' ? 'Ainda não tem conta?' : 'Já tem conta?' }}
-      <a href="javascript:void(0)" (click)="toggleMode()">
-        {{ mode() === 'login' ? 'Cadastre-se' : 'Entrar' }}
-      </a>
-    </p>
+    @if (mode() === 'forgot') {
+      <p class="text-center small mt-3 mb-0">
+        <a href="javascript:void(0)" (click)="backToLogin()">Voltar para o login</a>
+      </p>
+    } @else {
+      <p class="text-center small mt-3 mb-0">
+        {{ mode() === 'login' ? 'Ainda não tem conta?' : 'Já tem conta?' }}
+        <a href="javascript:void(0)" (click)="toggleMode()">
+          {{ mode() === 'login' ? 'Cadastre-se' : 'Entrar' }}
+        </a>
+      </p>
+    }
   </div>
 </div>

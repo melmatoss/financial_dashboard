@@ -44,4 +44,17 @@ export class AuthService {
   async signOut(): Promise<void> {
     await this.supabase.auth.signOut();
   }
+
+  //reset password
+  async requestPasswordReset(email: string): Promise<{ error: string | null }> {
+    const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    return { error: error?.message ?? null };
+  }
+
+  async updatePassword(newPassword: string): Promise<{ error: string | null }> {
+    const { error } = await this.supabase.auth.updateUser({ password: newPassword });
+    return { error: error?.message ?? null };
+  }
 }

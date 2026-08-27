@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
-import {RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
 import { AuthService } from './core/services/auth';
 import { ThemeService } from './core/services/theme';
 
@@ -15,6 +16,15 @@ export class AppComponent {
   private router = inject(Router);
 
   isSidebarOpen = signal(false);
+  isStandaloneRoute = signal(this.router.url.startsWith('/reset-password'));
+
+  constructor() {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.isStandaloneRoute.set(this.router.url.startsWith('/reset-password'));
+      });
+  }
 
   toggleSidebar(): void {
     this.isSidebarOpen.update(open => !open);
@@ -27,6 +37,5 @@ export class AppComponent {
   async onLogout(): Promise<void> {
     await this.authService.signOut();
     this.router.navigate(['/login']);
-
   }
 }

@@ -1,5 +1,5 @@
 @if (authService.isAuthReady()) {
-  @if (authService.currentUser()) {
+  @if (authService.currentUser() && !isStandaloneRoute()) {
     <div class="app-shell">
       <!-- Header só visível em telas pequenas -->
       <header class="mobile-header d-lg-none d-flex align-items-center justify-content-between p-3 bg-body border-bottom">
